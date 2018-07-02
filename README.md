@@ -4,12 +4,14 @@ A first level character generator designed for use with the [Basic Fantasy Role 
 
 Implements character generation using [Equipment Packs](https://basicfantasy.org/downloads/BF-Equipment-Packs-r1.pdf) and two house rules:
 
-* Max HP at first level
-* Trading ability scores 2:1 as in Moldvay B/X D&D.
+* Max HP at first level, computed as the greater of: max HP for chosen race/class or max HP for chosen race/class + CON modifier.
+* Trading between ability scores 2:1 as in Moldvay B/X D&D.
 
 ## Quick Start
 
 This is a single-page web application with no server-side dependencies. It can be run locally by opening `index.html` in a browser. An internet connection is required as it will attempt to download [Bootstrap](https://getbootstrap.com/) components and [Font Awesome Icons](https://fontawesome.com/v4.7.0/icons/) from their respective CDNs.
+
+Enter a name, background/bio and select race, class and equipment pack(s). Use the +/- buttons to modify abilities. The reset button will revert any ability score changes to the original "rolled" version.
 
 ## Known Issues/Limitations
 
