@@ -1,0 +1,38 @@
+.fa.disabled,
+.fa[disabled],
+.disabled > .fa,
+[disabled] > .fa {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+.box {
+    border: 1px solid black;
+    display: inline-block;
+}
+
+ul.buttons {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+ul.buttons li {
+    list-style-type: none;
+}
+
+.mod {
+    display: inline-block;
+}
+
+.ability dl dd {
+    display: inline-block;
+}
+
+.ability dl dt {
+    display: inline-block;
+}
