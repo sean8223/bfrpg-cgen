@@ -32,21 +32,20 @@
       <div class="row">
 	<div class="col-sm">
 	  <section>
-	    <h1>Abilities</h1>
-	    <button id="reset"><i class="fa fa-refresh"></i></button>
-	    <div class="buffer">
-	      <dl><dt>Buffer</dt><dd><span id="buffer"></span></dd></dl>
+	    <div class="lock-unlock">
+	      <h1>Abilities<a role="button" href="#" id="lock"><i class="fa fa-lock"></i></a><a class="hidden" role="button" href="#" id="unlock"><i class="fa fa-unlock"></i></a><a role="button" href="#" id="reset" class="hidden"><i class="fa fa-refresh"></i></a><span class="hidden" id="buffer"></span></h1>
 	    </div>
-	    <div class="ability">
+	    <div id="abilities" class="hidden">
+	      <div class ="ability">
 	      <dl>
 		<dt>STR</dt>
 		<dd>
 		  <div class="box" id="str"></div>
+		  <div class="mod" id="strmod"></div>
 		  <ul class="buttons">
 		    <li><a role="button" href="#" id="incstr"><i class="fa fa-plus-square"></i></a></li>
 		    <li><a role="button" href="#" id="decstr"><i class="fa fa-minus-square"></i></a></li>
 		  </ul>
-		  <div class="mod" id="strmod"></div>
 		</dd>
 	      </dl>
 	    </div>
@@ -55,11 +54,11 @@
 		<dt>INT</dt>
 		<dd>
 		  <div class="box" id="int"></div>
+		  <div class="mod" id="intmod"></div>
 		  <ul class="buttons">
 		    <li><a role="button" href="#" id="incint"><i class="fa fa-plus-square"></i></a></li>
 		    <li><a role="button" href="#" id="decint"><i class="fa fa-minus-square"></i></a></li>
 		  </ul>
-		  <div class="mod" id="intmod"></div>
 		</dd>
 	      </dl>
 	    </div>
@@ -68,11 +67,11 @@
 		<dt>WIS</dt>
 		<dd>
 		  <div class="box" id="wis"></div>
+		  <div class="mod" id="wismod"></div>
 		  <ul class="buttons">
 		    <li><a role="button" href="#" id="incwis"><i class="fa fa-plus-square"></i></a></li>
 		    <li><a role="button" href="#" id="decwis"><i class="fa fa-minus-square"></i></a></li>
 		  </ul>
-		  <div class="mod" id="wismod"></div>
 		</dd>
 	      </dl>
 	    </div>
@@ -81,11 +80,11 @@
 		<dt>DEX</dt>
 		<dd>
 		  <div class="box" id="dex"></div>
+		  <div class="mod" id="dexmod"></div>
 		  <ul class="buttons">
 		    <li><a role="button" href="#" id="incdex"><i class="fa fa-plus-square"></i></a></li>
 		    <li><a role="button" href="#" id="decdex"><i class="fa fa-minus-square"></i></a></li>
 		  </ul>
-		  <div class="mod" id="dexmod"></div>
 		</dd>
 	      </dl>
 	    </div>
@@ -106,6 +105,15 @@
 		  <div class="mod" id="chamod"></div>
 		</dd>
 	      </dl>
+	    </div>
+	    </div>
+	    <div id="abilities-ro">
+	      <dl><dt>STR</dt><dd><span id="str-ro"></span>&nbsp;<span class="mod" id="strmod-ro"></span></dl>
+	      <dl><dt>INT</dt><dd><span id="int-ro"></span>&nbsp;<span class="mod" id="intmod-ro"></span></dl>
+	      <dl><dt>WIS</dt><dd><span id="wis-ro"></span>&nbsp;<span class="mod" id="wismod-ro"></span></dl>
+	      <dl><dt>DEX</dt><dd><span id="dex-ro"></span>&nbsp;<span class="mod" id="dexmod-ro"></span></dl>
+	      <dl><dt>CON</dt><dd><span id="con-ro"></span>&nbsp;<span class="mod" id="conmod-ro"></span></dl>
+	      <dl><dt>CHA</dt><dd><span id="cha-ro"></span>&nbsp;<span class="mod" id="chamod-ro"></span></dl>
 	    </div>
 	  </section>
 	</div>
@@ -132,37 +140,6 @@
 	  </section>
 	</div>
       </div>
-      <div class="row">
-	<div class="col-sm">
-	  <section>
-	    <h1>Inventory</h1>
-	    <table id="inventory">
-	      <tr>
-		<th>Qty</th>
-		<th>Name</th>
-		</tr>
-	    </table>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section>
-	    <h1>Weapons</h1>
-	    <table id="weapons">
-	    </table>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section>
-	    <h1>Armor</h1>
-	    <table id="armor">
-	      <tr><th></th></tr>
-	    </table>
-	  </section>
-	</div>
-      </div>
-    </div>
-
-    <div class="container">
       <div class="row">
 	<div class="col-sm">
 	  <section>
@@ -198,6 +175,37 @@
 	      <li>Humans may be any single class. They have no minimum or maximum ability score requirements.</li>
 	      <li>Humans learn exceptionally quickly, gaining a 10% bonus to all experience points earned.</li>
 	    </ul>
+	  </section>
+	</div>
+	<div class="col-sm">
+	  <section>
+	    <h1>Weapons</h1>
+	    <table id="weapons">
+	    </table>
+	  </section>
+	</div>
+	<div class="col-sm">
+	  <section>
+	    <h1>Armor</h1>
+	    <table id="armor">
+	      <tr><th></th></tr>
+	    </table>
+	  </section>
+	</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+	<div class="col-sm">
+	  <section>
+	    <h1>Inventory</h1>
+	    <table id="inventory">
+	      <tr>
+		<th>Qty</th>
+		<th>Name</th>
+		</tr>
+	    </table>
 	  </section>
 	</div>
 	<div class="col-sm">
@@ -245,7 +253,7 @@
 	  </section>
 	</div>
 	<div class="col-sm">
-	  <section>
+	  <section id="Spells">
 	    <h1>Spells</h1>
 	  </section>
 	</div>

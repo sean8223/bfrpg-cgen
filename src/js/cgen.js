@@ -611,12 +611,12 @@ var cgen = (function() {
 	return n;
     }
     
-    function format_mod(mod) {
+    function format_mod(mod, parens) {
 	if (mod > 0) {
-	    return "+" + mod;
+	    return parens ? "(+" + mod + ")" : "+" + mod;
 	}
 	else if (mod < 0) {
-	    return mod;
+	    return parens ? "(" + mod +  ")" : mod;
 	}
 	else {
 	    return "";
@@ -653,6 +653,16 @@ var cgen = (function() {
 	return merged;
     }
 
+    function getParameterByName(name, url) {
+	// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+	if (!url) url = window.location.href;
+	name = name.replace(/[\[\]]/g, '\\$&');
+	var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
+	if (!results) return null;
+	if (!results[2]) return '';
+	return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
     // screen update functions
     
     function update_abilities() {
@@ -664,6 +674,7 @@ var cgen = (function() {
 	    var ability = abilities[i];
 	    var value = ch.calc_effective_ability(ability);
 	    document.getElementById(ability).innerText = value;
+	    document.getElementById(ability + "-ro").innerText = value;
 	    
 	    var dec = document.getElementById("dec" + ability);
 	    if (dec) {
@@ -707,11 +718,15 @@ var cgen = (function() {
 		}
 	    }
 
-	    document.getElementById(ability + "mod").innerText = format_mod(ch.calc_effective_ability_mod(ability));
+	    document.getElementById(ability + "mod").innerText = format_mod(ch.calc_effective_ability_mod(ability), true);
+	    document.getElementById(ability + "mod-ro").innerText = format_mod(ch.calc_effective_ability_mod(ability), true);
 	    
 	}
-	
-	document.getElementById("buffer").innerText = ch.buffer;
+
+	var buffer = document.getElementById("buffer");
+	if (buffer) {
+	    buffer.innerText = ch.buffer;
+	}
 
     }
 
@@ -781,7 +796,7 @@ var cgen = (function() {
 	    var save = ch.calc_save(saves[i]);
 	    document.getElementById(saves[i]).innerText = save ? save : "-";
 	    var save_mod = ch.calc_save_mod(saves[i]);
-	    document.getElementById(saves[i] + "mod").innerText = save_mod ? format_mod(save_mod) : "";
+	    document.getElementById(saves[i] + "mod").innerText = save_mod ? format_mod(save_mod, true) : "";
 	}
     }
     
@@ -804,6 +819,16 @@ var cgen = (function() {
 	    else {
 		skills.classList.add("hidden");
 	    }
+	}
+    }
+
+    function update_spells() {
+	var spells = document.getElementById("Spells");
+	if (ch.cls && (ch.cls.indexOf("Magic User") != -1 || ch.cls.indexOf("Cleric") != -1)) {
+	    spells.classList.remove("hidden");
+	}
+	else {
+	    spells.classList.add("hidden");
 	}
     }
 
@@ -940,6 +965,7 @@ var cgen = (function() {
 	update_saving_throws();
 	update_languages();
 	update_class_skills();
+	update_spells();
 	update_race_description();
 	update_inventory();
 	update_weapons();
@@ -987,11 +1013,39 @@ var cgen = (function() {
 	bonus2.onchange = equipment_changed;
     }
 
+    function init_abilities() {
+	var reset = document.getElementById("reset");
+	if (reset) {
+	    reset.onclick = function() { ch.reset_ability_adjs(); update(); return false; };
+	}
+	var abilities = document.getElementById("abilities");
+	var abilitiesRO = document.getElementById("abilities-ro");
+	var lock = document.getElementById("lock");
+	var unlock = document.getElementById("unlock");
+	var buffer = document.getElementById("buffer");
+	lock.onclick = function() {
+	    lock.classList.add("hidden");
+	    reset.classList.remove("hidden");
+	    buffer.classList.remove("hidden");
+	    unlock.classList.remove("hidden");
+	    abilitiesRO.classList.add("hidden");
+	    abilities.classList.remove("hidden");
+	}
+	unlock.onclick = function() {
+	    unlock.classList.add("hidden");
+	    reset.classList.add("hidden");
+	    buffer.classList.add("hidden");
+	    lock.classList.remove("hidden");
+	    abilitiesRO.classList.remove("hidden");
+	    abilities.classList.add("hidden");
+	}
+    }	
+
     function init() {
 	init_race();
 	init_cls();
 	init_equipment();
-	document.getElementById("reset").onclick = function() { ch.reset_ability_adjs(); update(); return false; };
+	init_abilities();
 	update();
     }
     

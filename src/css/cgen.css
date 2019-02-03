@@ -13,26 +13,50 @@
 .box {
     border: 1px solid black;
     display: inline-block;
+    padding: 5px;
+    min-width: 2em;
 }
 
 ul.buttons {
     display: inline-block;
     margin: 0;
     padding: 0;
+    vertical-align: middle;
+    margin-right: 0.5em;
 }
 
 ul.buttons li {
     list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 .mod {
     display: inline-block;
+    min-width: 2em;
 }
 
 .ability dl dd {
     display: inline-block;
+    text-align: center;
 }
 
 .ability dl dt {
     display: inline-block;
+    text-align: right;
+    min-width: 3em;
+    padding-right: 0.5em;
+}
+
+.lock-unlock h1 {
+    display: inline-block;
+    padding-right: 1em;
+}
+
+.lock-unlock h1 a {
+    margin-left: 0.5em;
+}
+
+.lock-unlock h1 span#buffer {
+    margin-left: 0.5em;
 }
