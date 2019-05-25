@@ -53,10 +53,14 @@ ul.buttons li {
     padding-right: 1em;
 }
 
-.lock-unlock h1 a {
+h1 a {
     margin-left: 0.5em;
 }
 
 .lock-unlock h1 span#buffer {
     margin-left: 0.5em;
+}
+
+input.small {
+    width: 4em;
 }

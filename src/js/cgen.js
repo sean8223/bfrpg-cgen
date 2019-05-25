@@ -1,34 +1,43 @@
 var cgen = (function() {
 
-    function Character() {
-	this.name = "";
-	this.cls = "";
-	this.race = "";
-	this.backstory = "";
+    // bfrpg rules
+    
+    function Character(params) {
+	this.name = supplied_or(params.get("name"), "Name");
+	var cls = params.get("cls");
+	var clss = Object.keys(CLASS_RULES);
+	this.cls = cls && clss.includes(cls) ? cls : "";
+	var race = params.get("race");
+	var races = Object.keys(RACE_RULES);
+	this.race = race && races.includes(race) ? race : "";
+	this.age = supplied_or(params.get("age"), "");
+	this.height = supplied_or(params.get("height"), "");
+	this.weight = supplied_or(params.get("weight"), "");
+	this.background = supplied_or(params.get("background"), "Background");
 	this.abilities = {
-	    str:roll(3, 6),
-	    int:roll(3, 6),
-	    wis:roll(3, 6),
-	    dex:roll(3, 6),
-	    con:roll(3, 6),
-	    cha:roll(3, 6)
+	    str:supplied_or_roll(params.get("str"), 3, 6),
+	    int:supplied_or_roll(params.get("int"), 3, 6),
+	    wis:supplied_or_roll(params.get("wis"), 3, 6),
+	    dex:supplied_or_roll(params.get("dex"), 3, 6),
+	    con:supplied_or_roll(params.get("con"), 3, 6),
+	    cha:supplied_or_roll(params.get("cha"), 3, 6)
 	};
-	this.buffer = 0;
+	this.buffer = supplied_or_num(params.get("buffer"), 0);
 	this.ability_adjs = {
-	    str:0,
-	    int:0,
-	    wis:0,
-	    dex:0,
+	    str:supplied_or_num("str_adj", 0),
+	    int:supplied_or_num("int_adj", 0),
+	    wis:supplied_or_num("wis_adj", 0),
+	    dex:supplied_or_num("dex_adj", 0),
 	    con:0,
 	    cha:0
 	};
 	this.level = 1;
 	this.xp = 0;
-	this.additional_languages = [];
-	this.starting_gp = roll(2,6) * 10;
-	this.packs = [ "Basic Pack" ];
+	this.additional_languages = supplied_or_list(params.getAll("language"), []);
+	this.starting_gp = supplied_or_roll("starting_gp", 2, 6);
+	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
     }
-    
+
     Character.prototype.inc_ability = function(ability) {
 	if (this.buffer > 0) {
 	    this.buffer--;
@@ -149,8 +158,11 @@ var cgen = (function() {
 	    languages.push(this.race);
 	}
 	var additional = this.calc_effective_ability_mod("int");
-	if (additional > 0) {
-	    languages.push(additional + " additional");
+	if (additional != this.additional_languages.length) {
+	    this.additional_languages.length = Math.max(additional, 0);
+	}
+	for (var i = 0; i < additional; i++) {
+	    languages.push(this.additional_languages[i]);
 	}
 	return languages;
     };
@@ -296,6 +308,44 @@ var cgen = (function() {
 	    }
 	}
     };
+
+    Character.prototype.calc_query_string = function() {
+	var params = {
+	    name:  this.name,
+	    race: this.race,
+	    cls: this.cls,
+	    age: this.age,
+	    height: this.height,
+	    weight: this.weight,
+	    background: this.background,
+	    pack: this.packs,
+	    language: this.additional_languages,
+	    str: this.abilities.str,
+	    int: this.abilities.int,
+	    wis: this.abilities.wis,
+	    dex: this.abilities.dex,
+	    con: this.abilities.con,
+	    cha: this.abilities.cha,
+	    buffer: this.buffer,
+	    str_adj: this.ability_adjs.str,
+	    int_adj: this.ability_adjs.int,
+	    wis_adj: this.ability_adjs.wis,
+	    dex_adj: this.ability_adjs.dex,
+	    starting_gp: this.starting_gp
+	};
+	var query_string = Object.keys(params).map((key) => {
+	    if (Array.isArray(params[key])) {
+		var v = params[key].map((x) => {
+		    return encodeURIComponent(key) + "=" + encodeURIComponent(x)
+		}).join("&");
+		return v;
+	    }
+	    else {
+		return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+	    }
+	}).join('&');
+	return query_string;
+    }
 
     // xxx
 
@@ -603,6 +653,24 @@ var cgen = (function() {
 
     // general
 
+    function supplied_or(param, value) {
+	return param ? param : value;
+    }
+
+    function supplied_or_num(param, value) {
+	num = parseInt(param)
+	return !Number.isNaN(num) ? num : value;
+    }
+
+    function supplied_or_list(param, value) {
+	return param.length > 0 ? param : value;
+    }
+    
+    function supplied_or_roll(param, num, die) {
+	var asInt = parseInt(param);
+	return !Number.isNaN(asInt) && asInt >= num && asInt <= num * die ? asInt  : roll(num, die);
+    }
+    
     function roll(num, die) {
 	var n = 0;
 	for (var i = 0; i < num; i++) {
@@ -651,16 +719,6 @@ var cgen = (function() {
 	    }
 	}
 	return merged;
-    }
-
-    function getParameterByName(name, url) {
-	// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-	if (!url) url = window.location.href;
-	name = name.replace(/[\[\]]/g, '\\$&');
-	var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'), results = regex.exec(url);
-	if (!results) return null;
-	if (!results[2]) return '';
-	return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
     // screen update functions
@@ -760,7 +818,7 @@ var cgen = (function() {
 	var movement = ch.calc_movement();
 	document.getElementById("movement").innerText = movement + "'";
 	var weight = ch.calc_weight();
-	document.getElementById("weight").innerText = weight + " lbs.";
+	document.getElementById("eqweight").innerText = weight + " lbs.";
 	var load = ch.calc_load();
 	document.getElementById("load").innerText = load;
     }
@@ -954,11 +1012,44 @@ var cgen = (function() {
 	document.getElementById("armor").innerHTML = tbl;
     }
 
+    function update_name() {
+	document.getElementById("name").value = ch.name;
+	document.getElementById("background").value = ch.background;
+	document.getElementById("race").value = ch.race;
+	document.getElementById("cls").value = ch.cls;
+	document.getElementById("age").value = ch.age;
+	document.getElementById("height").value = ch.height;
+	document.getElementById("weight").value = ch.weight;
+    }
+
+    function update_equipment() {
+	var equipment = document.getElementById("equipment");
+	equipment.value = "";
+	for (var i = 0; i < ch.packs.length; i++) {
+	    if (ch.packs[i] != "Basic Pack" && ch.packs[i] != "Bonus Pack 1" && ch.packs[i] != "Bonus Pack 2") {
+		equipment.value = ch.packs[i];
+		break;
+	    }
+	}
+
+	var bonus1 = document.getElementById("bonus1");
+	if (ch.packs.includes("Bonus Pack 1")) {
+	    bonus1.checked =true;
+	}
+	
+	var bonus2 = document.getElementById("bonus2");
+	if (ch.packs.includes("Bonus Pack 2")) {
+	    bonus2.checked = true;
+	}
+    }
+
     function update() {
+	update_name();
 	update_abilities();
 	update_race_options();
 	update_class_options();
 	update_equipment_options();
+	update_equipment();
 	update_hd_hp();
 	update_movement();
 	update_xp();
@@ -973,6 +1064,21 @@ var cgen = (function() {
     }
     
     // screen setup functions
+
+    function init_name() {
+	var name = document.getElementById("name")
+	name.oninput = function(e) { ch.name = e.target.value; };
+	var background = document.getElementById("background");
+	background.oninput = function(e) { ch.background = e.target.value; };
+	var age = document.getElementById("age")
+	age.oninput = function(e) { ch.age = e.target.value; };
+	var height = document.getElementById("height")
+	height.oninput = function(e) { ch.height = e.target.value; };
+	var weight = document.getElementById("weight")
+	weight.oninput = function(e) { ch.weight = e.target.value; };
+	var link = document.getElementById("link");
+	link.onclick = function(e) { alert(window.location.protocol + "//" + window.location.hostname + "/" + window.location.pathname + "?" + ch.calc_query_string()); };
+    }
 
     function init_race() {
 	var race = document.getElementById("race");
@@ -1039,9 +1145,10 @@ var cgen = (function() {
 	    abilitiesRO.classList.remove("hidden");
 	    abilities.classList.add("hidden");
 	}
-    }	
+    }
 
     function init() {
+	init_name();
 	init_race();
 	init_cls();
 	init_equipment();
@@ -1050,8 +1157,8 @@ var cgen = (function() {
     }
     
     // character data
-    
-    var ch = new Character();
+
+    var ch = new Character(new URLSearchParams(window.location.search));
     
     // export
     

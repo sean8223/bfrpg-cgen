@@ -13,15 +13,20 @@
       <div class="row">
 	<div class="col-sm">
 	  <section>
-	    <form>
-	      <h1><input id="name" name="name" value="Name"></h1>
+	    <form id="top">
+	      <h1><input id="name" name="name" value="Name"><a role="button" href="#" id="link"><i class="fa fa-link"></i></a></h1>
+	      <br>
 	      <label for="race">Race:</label><select id="race" name="race"><option value="" selected></option></select>
 	      <label for="cls">Class:</label><select id="cls" name="cls"><option value="" selected></select>
-	      <label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value="" selected></select>
-	      <label for="bonus1">Bonus Pack 1:</label><input id="bonus1" name="equipment" value="Bonus Pack 1" type="checkbox">
-	      <label for="bonus2">Bonus Pack 2:</label><input id="bonus2" name="equipment" value="Bonus Pack 2" type="checkbox">
+	      <label for="age">Age:</label><input class="small" id="age" name="age">
+	      <label for="height">Height:</label><input class="small" id="height" name="height">
+	      <label for="weight">Weight:</label><input class="small" id="weight" name="weight">
 	      <br>
 	      <textarea rows="4" cols="60" id="background" name="background">Background</textarea>
+	      <br>
+	      <label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value=""></select>
+	      <label for="bonus1">Bonus Pack 1:</label><input id="bonus1" name="equipment" value="Bonus Pack 1" type="checkbox">
+	      <label for="bonus2">Bonus Pack 2:</label><input id="bonus2" name="equipment" value="Bonus Pack 2" type="checkbox">
 	    </form>
 	  </section>
 	</div>
@@ -122,7 +127,7 @@
 	    <h1>Stats</h1>
 	    <dl><dt>AC</dt><dd><span id="ac"></span></dd></dl>
 	    <dl><dt>HP</dt><dd><span id="hp"></span>/<span id="max_hp"></span>&nbsp;(HD d<span id="hd"></span>)</dd></dl>
- 	    <dl><dt>Movement</dt><dd><span id="movement"></span>&nbsp;(<span id="weight"></span>, <span id="load"></span>)</dd></dl>
+ 	    <dl><dt>Movement</dt><dd><span id="movement"></span>&nbsp;(<span id="eqweight"></span>, <span id="load"></span>)</dd></dl>
 	    <dl><dt>Attack Bonus</dt><dd><span id="attack_bonus"></span></dd></dl>
 	    <dl><dt>XP</dt><dd><span id="xp"></span>/<span id="next_level_xp"></span>&nbsp;(XP Bonus <span id="xp_mod"></span>)</dd></dl>
 	    <dl><dt>GP</dt><dd><span id="gp"></span></dd></dl>
