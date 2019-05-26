@@ -24,10 +24,10 @@ var cgen = (function() {
 	};
 	this.buffer = supplied_or_num(params.get("buffer"), 0);
 	this.ability_adjs = {
-	    str:supplied_or_num("str_adj", 0),
-	    int:supplied_or_num("int_adj", 0),
-	    wis:supplied_or_num("wis_adj", 0),
-	    dex:supplied_or_num("dex_adj", 0),
+	    str:supplied_or_num(params.get("str_adj"), 0),
+	    int:supplied_or_num(params.get("int_adj"), 0),
+	    wis:supplied_or_num(params.get("wis_adj"), 0),
+	    dex:supplied_or_num(params.get("dex_adj"), 0),
 	    con:0,
 	    cha:0
 	};
