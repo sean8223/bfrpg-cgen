@@ -34,7 +34,7 @@ var cgen = (function() {
 	this.level = 1;
 	this.xp = 0;
 	this.additional_languages = supplied_or_list(params.getAll("language"), []);
-	this.starting_gp = supplied_or_roll("starting_gp", 2, 6);
+	this.starting_gp = supplied_or(params.get("starting_gp"), roll(2, 6) * 10);
 	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
     }
 
