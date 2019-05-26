@@ -8,14 +8,13 @@
     <script src="js/cgen.js" type="text/javascript"></script>
   </head>
   <body>
-    
+
     <div class="container">
       <div class="row">
 	<div class="col-sm">
 	  <section>
 	    <form id="top">
-	      <h1><input id="name" name="name" value="Name"><a role="button" href="#" id="link"><i class="fa fa-link"></i></a></h1>
-	      <br>
+	      <h1><input id="name" name="name" value="Name"></h1>
 	      <label for="race">Race:</label><select id="race" name="race"><option value="" selected></option></select>
 	      <label for="cls">Class:</label><select id="cls" name="cls"><option value="" selected></select>
 	      <label for="age">Age:</label><input class="small" id="age" name="age">
@@ -27,6 +26,8 @@
 	      <label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value=""></select>
 	      <label for="bonus1">Bonus Pack 1:</label><input id="bonus1" name="equipment" value="Bonus Pack 1" type="checkbox">
 	      <label for="bonus2">Bonus Pack 2:</label><input id="bonus2" name="equipment" value="Bonus Pack 2" type="checkbox">
+	      <br>
+	      <label for="link">Link:</label><input id="link" name="link" value="" readonly><a role="button" href="#" id="copylink"><i class="fa fa-copy"></i></a>
 	    </form>
 	  </section>
 	</div>
@@ -264,7 +265,7 @@
 	</div>
       </div>
     </div>
-    
+
     <script type="text/javascript">cgen.init();</script>
   </body>
 </html>

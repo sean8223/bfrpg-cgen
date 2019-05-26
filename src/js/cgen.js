@@ -1012,7 +1012,7 @@ var cgen = (function() {
 	document.getElementById("armor").innerHTML = tbl;
     }
 
-    function update_name() {
+    function update_inputs() {
 	document.getElementById("name").value = ch.name;
 	document.getElementById("background").value = ch.background;
 	document.getElementById("race").value = ch.race;
@@ -1043,8 +1043,24 @@ var cgen = (function() {
 	}
     }
 
+    function update_link() {
+	var link = document.getElementById("link");
+	var base;
+	if (window.location.protocol == "file:") {
+	    base = window.location.protocol + "//"
+	}
+	else {
+	    var port = "";
+	    if (window.location.port) {
+		port = ":" + window.location.port;
+	    }
+	    base = window.location.protocol + "//" + window.location.hostname + port;
+	}
+	link.value = base + window.location.pathname + "?" + ch.calc_query_string();
+    }
+
     function update() {
-	update_name();
+	update_inputs();
 	update_abilities();
 	update_race_options();
 	update_class_options();
@@ -1061,23 +1077,24 @@ var cgen = (function() {
 	update_inventory();
 	update_weapons();
 	update_armor();
+	update_link();
     }
     
     // screen setup functions
 
-    function init_name() {
+    function init_inputs() {
 	var name = document.getElementById("name")
-	name.oninput = function(e) { ch.name = e.target.value; };
+	name.oninput = function(e) { ch.name = e.target.value; update(); };
 	var background = document.getElementById("background");
-	background.oninput = function(e) { ch.background = e.target.value; };
+	background.oninput = function(e) { ch.background = e.target.value; update(); };
 	var age = document.getElementById("age")
-	age.oninput = function(e) { ch.age = e.target.value; };
+	age.oninput = function(e) { ch.age = e.target.value; update(); };
 	var height = document.getElementById("height")
-	height.oninput = function(e) { ch.height = e.target.value; };
+	height.oninput = function(e) { ch.height = e.target.value; update(); };
 	var weight = document.getElementById("weight")
-	weight.oninput = function(e) { ch.weight = e.target.value; };
-	var link = document.getElementById("link");
-	link.onclick = function(e) { alert(window.location.protocol + "//" + window.location.hostname + "/" + window.location.pathname + "?" + ch.calc_query_string()); };
+	weight.oninput = function(e) { ch.weight = e.target.value; update(); };
+	var copy_link = document.getElementById("copylink");
+	copy_link.onclick = function(e) { var link = document.getElementById("link"); link.select(); document.execCommand("copy"); };
     }
 
     function init_race() {
@@ -1148,7 +1165,7 @@ var cgen = (function() {
     }
 
     function init() {
-	init_name();
+	init_inputs();
 	init_race();
 	init_cls();
 	init_equipment();
