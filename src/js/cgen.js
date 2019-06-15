@@ -34,8 +34,9 @@ var cgen = (function() {
 	this.level = 1;
 	this.xp = 0;
 	this.additional_languages = supplied_or_list(params.getAll("language"), []);
-	this.starting_gp = supplied_or(params.get("starting_gp"), roll(2, 6) * 10);
+	this.starting_gp = supplied_or_num(params.get("starting_gp"), roll(2, 6) * 10);
 	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
+	this.spells = supplied_or_list(params.getAll("spell"), []);
     }
 
     Character.prototype.inc_ability = function(ability) {
@@ -166,6 +167,16 @@ var cgen = (function() {
 	}
 	return languages;
     };
+
+    Character.prototype.calc_spells = function() {
+	if (this.cls == "Magic User") {
+	    this.spells = [ "Read Magic", undefined ];
+	}
+	else {
+	    this.spells.length = 0;
+	}
+	return this.spells;
+    }
     
     Character.prototype.calc_effective_ability_mod = function(ability) {
 	var value = this.calc_effective_ability(ability);
@@ -331,7 +342,8 @@ var cgen = (function() {
 	    int_adj: this.ability_adjs.int,
 	    wis_adj: this.ability_adjs.wis,
 	    dex_adj: this.ability_adjs.dex,
-	    starting_gp: this.starting_gp
+	    starting_gp: this.starting_gp,
+	    spell: this.spells
 	};
 	var query_string = Object.keys(params).map((key) => {
 	    if (Array.isArray(params[key])) {
@@ -866,7 +878,7 @@ var cgen = (function() {
 	    lang_items.innerHTML+="<li>"+languages[i]+"</li>";
 	}
     }
-    
+
     function update_class_skills() {
 	var clses = [ "Cleric", "Thief" ];
 	for (var i = 0, len = clses.length; i < len; i++) {
@@ -881,12 +893,18 @@ var cgen = (function() {
     }
 
     function update_spells() {
-	var spells = document.getElementById("Spells");
+	var spells_section = document.getElementById("Spells");
 	if (ch.cls && (ch.cls.indexOf("Magic User") != -1 || ch.cls.indexOf("Cleric") != -1)) {
-	    spells.classList.remove("hidden");
+	    var spell_items = document.getElementById("spell_list");
+	    spell_items.innerHTML = "";
+	    var spells = ch.calc_spells();
+	    for (var i = 0, len = spells.length; i < len; i++) {
+		spell_items.innerHTML += "<li>"+spells[i]+"</li>";
+	    }
+	    spells_section.classList.remove("hidden");
 	}
 	else {
-	    spells.classList.add("hidden");
+	    spells_section.classList.add("hidden");
 	}
     }
 
@@ -1164,12 +1182,19 @@ var cgen = (function() {
 	}
     }
 
+    function init_print() {
+	var print = document.getElementById("print");
+	print.onclick = function(e) {
+	};
+    }
+
     function init() {
 	init_inputs();
 	init_race();
 	init_cls();
 	init_equipment();
 	init_abilities();
+	init_print();
 	update();
     }
     

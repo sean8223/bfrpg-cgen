@@ -68,3 +68,15 @@ input.small {
 input+a {
     margin-left: 0.5em;
 }
+
+table {
+    width: 100%
+}
+
+tr {
+    border-bottom: 1px solid black;
+}
+
+th {
+    border-bottom: 3px solid black;
+}
