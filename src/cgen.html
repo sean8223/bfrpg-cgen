@@ -14,7 +14,7 @@
 	<div class="col-sm">
 	  <section>
 	    <form id="top">
-	      <h1><input id="name" name="name" value="Name"><a role="button" href="#" id="print"><i class="fa fa-print"></i></a></h1>
+	      <h1><input id="name" name="name" value="Name"></h1>
 	      <label for="race">Race:</label><select id="race" name="race"><option value="" selected></option></select>
 	      <label for="cls">Class:</label><select id="cls" name="cls"><option value="" selected></select>
 	      <label for="age">Age:</label><input class="small" id="age" name="age">
@@ -22,12 +22,16 @@
 	      <label for="weight">Weight:</label><input class="small" id="weight" name="weight">
 	      <br>
 	      <textarea rows="4" cols="60" id="background" name="background">Background</textarea>
-	      <br>
-	      <label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value=""></select>
-	      <label for="bonus1">Bonus Pack 1:</label><input id="bonus1" name="equipment" value="Bonus Pack 1" type="checkbox">
-	      <label for="bonus2">Bonus Pack 2:</label><input id="bonus2" name="equipment" value="Bonus Pack 2" type="checkbox">
-	      <br>
-	      <label for="link">Link:</label><input id="link" name="link" value="" readonly><a role="button" href="#" id="copylink"><i class="fa fa-copy"></i></a>
+	      <span class="noprint">
+		<br>
+		<label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value=""></select>
+		<label for="bonus1">Bonus Pack 1:</label><input id="bonus1" name="equipment" value="Bonus Pack 1" type="checkbox">
+		<label for="bonus2">Bonus Pack 2:</label><input id="bonus2" name="equipment" value="Bonus Pack 2" type="checkbox">
+	      </span>
+	      <span class="noprint">
+		<br>
+		<label for="link">Link:</label><input id="link" name="link" value="" readonly><a role="button" href="#" id="copylink"><i class="fa fa-copy"></i></a>
+	      </span>
 	    </form>
 	  </section>
 	</div>
@@ -132,12 +136,11 @@
 	    <dl><dt>Attack Bonus</dt><dd><span id="attack_bonus"></span></dd></dl>
 	    <dl><dt>XP</dt><dd><span id="xp"></span>/<span id="next_level_xp"></span>&nbsp;(XP Bonus <span id="xp_mod"></span>)</dd></dl>
 	    <dl><dt>GP</dt><dd><span id="gp"></span></dd></dl>
-	    <dl><dt>Languages</dt><dd><ul id="languages"></ul></dd></dl>
 	  </section>
 	</div>
 	<div class="col-sm">
 	  <section>
-	    <h1>Saving Throws</h1>
+	    <h1>Saves</h1>
 	    <dl><dt>Death/Poison</dt><dd><span id="death"></span>&nbsp;<span id="deathmod"></span></dd></dl>
 	    <dl><dt>Wands</dt><dd><span id="wands"></span>&nbsp;<span id="wandsmod"></span></dd></dl>
 	    <dl><dt>Paralysis/Turn to Stone</dt><dd><span id="paralysis"></span>&nbsp;<span id="paralysismod"></span></dd></dl>
@@ -145,8 +148,83 @@
 	    <dl><dt>Spells</dt><dd><span id="spells"></span>&nbsp;<span id="spellsmod"></span></dd></dl>
 	  </section>
 	</div>
+	<div class="col-sm" class="hidden" id="class_skills_col">
+	  <section id="turn_undead" class="hidden">
+	    <h1>Turn</h1>
+	    <dl>
+	      <dt>Skeleton (1 HD)</dt>
+	      <dd>13</dd>
+	      <dt>Zombie (2 HD)</dt>
+	      <dd>17</dd>
+	      <dt>Ghoul (3 HD)</dt>
+	      <dd>19</dd>
+	      <dt>Wight (4 HD)</dt>
+	      <dd>No</dd>
+	      <dt>Wraith (5 HD)</dt>
+	      <dd>No</dd>
+	      <dt>Mummy (6 HD)</dt>
+	      <dd>No</dd>
+	      <dt>Spectre (7 HD)</dt>
+	      <dd>No</dd>
+	      <dt>Vampire (8 HD)</dt>
+	      <dd>No</dd>
+	      <dt>Ghost (9+ HD)</dt>
+	      <dd>No</dd>
+	    </dl>
+	  </section>
+	  <section id="thief_skills">
+	    <h1>Thief Skills</h1>
+	    <dl>
+	      <dt>Open Locks</dt>
+	      <dd>25</dd>
+	      <dt>Remove Traps</dt>
+	      <dd>20</dd>
+	      <dt>Pick Pockets</dt>
+	      <dd>30</dd>
+	      <dt>Move Silently</dt>
+	      <dd>25</dd>
+	      <dt>Climb Walls</dt>
+	      <dd>80</dd>
+	      <dt>Hide</dt>
+	      <dd>10</dd>
+	      <dt>Listen</dt>
+	      <dd>30</dd>
+	    </dl>
+	  </section>
+	</div>
       </div>
       <div class="row">
+	<div class="col-sm">
+	  <section>
+	    <h1>Inventory</h1>
+	    <table id="inventory">
+	      <tr>
+		<th>Qty</th>
+		<th>Name</th>
+		</tr>
+	    </table>
+	  </section>
+	</div>
+	<div class="col-sm">
+	  <section>
+	    <h1>Weapons</h1>
+	    <table id="weapons">
+	    </table>
+	  </section>
+	  <section>
+	    <h1>Armor</h1>
+	    <table id="armor">
+	    </table>
+	  </section>
+	  <section id="Languages">
+	    <h1>Languages</h1>
+	    <table id="languages"></table>
+	  </section>
+	  <section id="Spells">
+	    <h1>Spells</h1>
+	    <table id="spell_list"></table>
+	  </section>
+	</div>
 	<div class="col-sm">
 	  <section>
 	    <h1>Notes</h1>
@@ -180,88 +258,6 @@
 	    <ul id="Human" class="hidden">
 	      <li>Humans may be any single class. They have no minimum or maximum ability score requirements.</li>
 	      <li>Humans learn exceptionally quickly, gaining a 10% bonus to all experience points earned.</li>
-	    </ul>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section>
-	    <h1>Weapons</h1>
-	    <table id="weapons">
-	    </table>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section>
-	    <h1>Armor</h1>
-	    <table id="armor">
-	      <tr><th></th></tr>
-	    </table>
-	  </section>
-	</div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="row">
-	<div class="col-sm">
-	  <section>
-	    <h1>Inventory</h1>
-	    <table id="inventory">
-	      <tr>
-		<th>Qty</th>
-		<th>Name</th>
-		</tr>
-	    </table>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section id="Cleric" class="hidden">
-	    <h1>Turn Undead</h1>
-	    <dl>
-	      <dt>Skeleton (1 HD)</dt>
-	      <dd>13</dd>
-	      <dt>Zombie (2 HD)</dt>
-	      <dd>17</dd>
-	      <dt>Ghoul (3 HD)</dt>
-	      <dd>19</dd>
-	      <dt>Wight (4 HD)</dt>
-	      <dd>No</dd>
-	      <dt>Wraith (5 HD)</dt>
-	      <dd>No</dd>
-	      <dt>Mummy (6 HD)</dt>
-	      <dd>No</dd>
-	      <dt>Spectre (7 HD)</dt>
-	      <dd>No</dd>
-	      <dt>Vampire (8 HD)</dt>
-	      <dd>No</dd>
-	      <dt>Ghost (9+ HD)</dt>
-	      <dd>No</dd>
-	    </dl>
-	  </section>
-	  <section id="Thief">
-	    <h1>Thief Skills</h1>
-	    <dl>
-	      <dt>Open Locks</dt>
-	      <dd>25</dd>
-	      <dt>Remove Traps</dt>
-	      <dd>20</dd>
-	      <dt>Pick Pockets</dt>
-	      <dd>30</dd>
-	      <dt>Move Silently</dt>
-	      <dd>25</dd>
-	      <dt>Climb Walls</dt>
-	      <dd>80</dd>
-	      <dt>Hide</dt>
-	      <dd>10</dd>
-	      <dt>Listen</dt>
-	      <dd>30</dd>
-	    </dl>
-	  </section>
-	</div>
-	<div class="col-sm">
-	  <section id="Spells">
-	    <h1>Spells</h1>
-	    <ul id="spell_list">
 	    </ul>
 	  </section>
 	</div>

@@ -73,10 +73,30 @@ table {
     width: 100%
 }
 
+div.row {
+    margin-bottom: 50px;
+}
+
 tr {
     border-bottom: 1px solid black;
 }
 
 th {
     border-bottom: 3px solid black;
+}
+
+section {
+    margin-bottom: 25px;
+}
+
+@media print {
+
+    body {
+	font-size: 10pt;
+    }
+    
+    .fa, .noprint {
+	display: none;
+    }
+
 }

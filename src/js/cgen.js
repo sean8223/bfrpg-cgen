@@ -33,10 +33,10 @@ var cgen = (function() {
 	};
 	this.level = 1;
 	this.xp = 0;
-	this.additional_languages = supplied_or_list(params.getAll("language"), []);
+	this.additional_languages = supplied_or_list(params.getAll("additional_language"), []);
 	this.starting_gp = supplied_or_num(params.get("starting_gp"), roll(2, 6) * 10);
 	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
-	this.spells = supplied_or_list(params.getAll("spell"), []);
+	this.additional_spells = supplied_or_list(params.getAll("additional_spell"), []);
     }
 
     Character.prototype.inc_ability = function(ability) {
@@ -158,24 +158,37 @@ var cgen = (function() {
 	if (this.race && this.race != "Human") {
 	    languages.push(this.race);
 	}
+	return languages;
+    };
+
+    Character.prototype.calc_additional_languages = function() {
 	var additional = this.calc_effective_ability_mod("int");
 	if (additional != this.additional_languages.length) {
 	    this.additional_languages.length = Math.max(additional, 0);
 	}
-	for (var i = 0; i < additional; i++) {
-	    languages.push(this.additional_languages[i]);
-	}
-	return languages;
+	return this.additional_languages;
     };
 
     Character.prototype.calc_spells = function() {
-	if (this.cls == "Magic User") {
-	    this.spells = [ "Read Magic", undefined ];
+	if (this.cls && this.cls.indexOf("Magic User") != -1) {
+	    this.spells = [ "Read Magic" ];
 	}
 	else {
 	    this.spells.length = 0;
 	}
 	return this.spells;
+    }
+
+    Character.prototype.calc_additional_spells = function() {
+	if (this.cls && this.cls.indexOf("Magic User") != -1) {
+	    if (this.additional_spells.length != 1) {
+		this.additional_spells.length = 1;
+	    }
+	}
+	else {
+	    this.additional_spells.length = 0;
+	}
+	return this.additional_spells;
     }
     
     Character.prototype.calc_effective_ability_mod = function(ability) {
@@ -330,7 +343,7 @@ var cgen = (function() {
 	    weight: this.weight,
 	    background: this.background,
 	    pack: this.packs,
-	    language: this.additional_languages,
+	    additional_language: this.additional_languages,
 	    str: this.abilities.str,
 	    int: this.abilities.int,
 	    wis: this.abilities.wis,
@@ -343,7 +356,7 @@ var cgen = (function() {
 	    wis_adj: this.ability_adjs.wis,
 	    dex_adj: this.ability_adjs.dex,
 	    starting_gp: this.starting_gp,
-	    spell: this.spells
+	    additional_spell: this.additional_spells
 	};
 	var query_string = Object.keys(params).map((key) => {
 	    if (Array.isArray(params[key])) {
@@ -468,20 +481,25 @@ var cgen = (function() {
     };
 
     var ARMOR_AND_SHIELDS = {
+	"Wizard Robes": {
+	    name: "Wizard Robes",
+	    ac: 11,
+	    movement: { "lightly loaded": 40, "heavily loaded": 30 }
+	},
     	"Leather Armor" : {
 	    name: "Leather Armor",
 	    ac: 13,
-	    movement: { "lightly loaded" : 40, "heavily loaded" : 30 }
+	    movement: { "lightly loaded" : 30, "heavily loaded" : 20 }
 	},
     	"Chain Mail" : {
 	    name: "Chain Mail",
 	    ac: 15,
-	    movement: { "lightly loaded" : 40, "heavily loaded" : 30 }
+	    movement: { "lightly loaded" : 20, "heavily loaded" : 10 }
 	},
     	"Plate Mail" : {
 	    name: "Plate Mail",
 	    ac: 17,
-	    movement: { "lightly loaded" : 40, "heavily loaded" : 30 }
+	    movement: { "lightly loaded" : 20, "heavily loaded" : 10 }
 	},
     	"Shield" : {
 	    name: "Shield",
@@ -569,6 +587,7 @@ var cgen = (function() {
 	    is_allowed: function(character) { return character.cls == "Magic User" || character.cls == "Fighter/Magic User" || character.cls == "Magic User/Thief"; },
 	    weight: 3,
 	    items: [ { name: "Spell Scroll" } ],
+	    armor: [ ARMOR_AND_SHIELDS["Wizard Robes"] ],
 	    weapons: [ merge([{qty:2}, WEAPONS["Dagger"]]),
 		       WEAPONS["Walking Staff"] ],
 	    cost: 0
@@ -577,6 +596,7 @@ var cgen = (function() {
 	    is_allowed: function(character) { return character.cls == "Magic User" || character.cls == "Fighter/Magic User" || character.cls == "Magic User/Thief"; },
 	    weight: 3,
 	    items: [],
+	    armor: [ ARMOR_AND_SHIELDS["Wizard Robes"] ],
 	    weapons: [ merge([{qty:2}, WEAPONS["Dagger"]]),
 		       WEAPONS["Walking Staff"] ],
 	    gp: 50,
@@ -691,12 +711,15 @@ var cgen = (function() {
 	return n;
     }
     
-    function format_mod(mod, parens) {
+    function format_mod(mod, parens, show_zero) {
 	if (mod > 0) {
 	    return parens ? "(+" + mod + ")" : "+" + mod;
 	}
 	else if (mod < 0) {
 	    return parens ? "(" + mod +  ")" : mod;
+	}
+	else if (show_zero) {
+	    return "+0";
 	}
 	else {
 	    return "";
@@ -857,7 +880,7 @@ var cgen = (function() {
 	document.getElementById("next_level_xp").innerText = next_level_xp ? next_level_xp : "-";
 	document.getElementById("xp").innerText = ch.xp;
 	document.getElementById("xp_mod").innerText = format_mod_pct(ch.calc_xp_mod());
-	document.getElementById("attack_bonus").innerText = ch.calc_attack_bonus();
+	document.getElementById("attack_bonus").innerText = format_mod(ch.calc_effective_to_hit("", "melee"), false, true) + " (melee), " + format_mod(ch.calc_effective_to_hit("", "ranged"), false, true) + " (ranged)";
     }
     
     function update_saving_throws() {
@@ -875,31 +898,68 @@ var cgen = (function() {
 	lang_items.innerHTML = "";
 	var languages = ch.calc_languages();
 	for (var i = 0, len = languages.length; i < len; i++) {
-	    lang_items.innerHTML+="<li>"+languages[i]+"</li>";
+	    if (languages[i]) {
+		lang_items.innerHTML+="<tr><td>"+languages[i]+"</td></tr>";
+	    }
+	}
+	var additional_languages = ch.calc_additional_languages();
+	for (var i = 0, len = additional_languages.length; i < len; i++) {
+	    var tr = document.createElement("tr");
+	    lang_items.appendChild(tr);
+	    var td = document.createElement("td");
+	    tr.appendChild(td);
+	    var input = document.createElement("input");
+	    input.id = "additional_language" + i;
+	    input.name = "additional_language";
+	    (function(x) { input.onchange = function(e) { additional_languages[x] = e.target.value; update(); return false; }; })(i);
+	    td.appendChild(input);
 	}
     }
 
     function update_class_skills() {
-	var clses = [ "Cleric", "Thief" ];
-	for (var i = 0, len = clses.length; i < len; i++) {
-	    var skills = document.getElementById(clses[i]);
-	    if (ch.cls.indexOf(clses[i]) != -1) {
-		skills.classList.remove("hidden");
-	    }
-	    else {
-		skills.classList.add("hidden");
-	    }
+	var class_skills_col = document.getElementById("class_skills_col");
+	var turn_undead = document.getElementById("turn_undead");
+	var thief_skills = document.getElementById("thief_skills");
+	if (ch.cls == "Cleric" ) {
+	    class_skills_col.classList.remove("hidden");
+	    turn_undead.classList.remove("hidden");
+	    thief_skills.classList.add("hidden");
+	}
+	else if (ch.cls == "Thief") {
+	    class_skills_col.classList.remove("hidden");
+	    turn_undead.classList.add("hidden");
+	    thief_skills.classList.remove("hidden");
+	}
+	else {
+	    class_skills_col.classList.add("hidden");
+	    turn_undead.classList.add("hidden");
+	    thief_skills.classList.add("hidden");
 	}
     }
 
     function update_spells() {
 	var spells_section = document.getElementById("Spells");
-	if (ch.cls && (ch.cls.indexOf("Magic User") != -1 || ch.cls.indexOf("Cleric") != -1)) {
-	    var spell_items = document.getElementById("spell_list");
-	    spell_items.innerHTML = "";
+	if (ch.cls && ch.cls.indexOf("Magic User") != -1) {
+	    var spell_items = document.getElementById("spell_list");	
+	    spell_items.innerHTML = "<tr><th>Level</th><th>Name</th></tr>";
 	    var spells = ch.calc_spells();
 	    for (var i = 0, len = spells.length; i < len; i++) {
-		spell_items.innerHTML += "<li>"+spells[i]+"</li>";
+		spell_items.innerHTML += "<tr><td>1</td><td>"+spells[i]+"</td></tr>";
+	    }
+	    var additional_spells = ch.calc_additional_spells();
+	    for (var i = 0, len = additional_spells.length; i < len; i++) {
+		var tr = document.createElement("tr");
+		spell_items.appendChild(tr);
+		var td = document.createElement("td");
+		td.innerText = "1";
+		tr.appendChild(td);
+		td = document.createElement("td");
+		tr.appendChild(td);
+		var input = document.createElement("input");
+		input.id = "additional_spell" + i;
+		input.name = "additional_spell";
+		(function(x) { input.onchange = function(e) { additional_spells[x] = e.target.value; update(); return false; }; })(i);
+		td.appendChild(input);
 	    }
 	    spells_section.classList.remove("hidden");
 	}
@@ -1038,6 +1098,12 @@ var cgen = (function() {
 	document.getElementById("age").value = ch.age;
 	document.getElementById("height").value = ch.height;
 	document.getElementById("weight").value = ch.weight;
+	for (var i = 0, len = ch.additional_spells.length; i < len; i++) {
+	    document.getElementById("additional_spell" + i).value = ch.additional_spells[i] ? ch.additional_spells[i] : "";
+	}
+	for (var i = 0, len = ch.additional_languages.length; i < len; i++) {	    
+	    document.getElementById("additional_language" + i).value = ch.additional_languages[i] ? ch.additional_languages[i] : "";
+	}
     }
 
     function update_equipment() {
@@ -1078,7 +1144,6 @@ var cgen = (function() {
     }
 
     function update() {
-	update_inputs();
 	update_abilities();
 	update_race_options();
 	update_class_options();
@@ -1096,6 +1161,7 @@ var cgen = (function() {
 	update_weapons();
 	update_armor();
 	update_link();
+	update_inputs();
     }
     
     // screen setup functions
@@ -1182,19 +1248,12 @@ var cgen = (function() {
 	}
     }
 
-    function init_print() {
-	var print = document.getElementById("print");
-	print.onclick = function(e) {
-	};
-    }
-
     function init() {
 	init_inputs();
 	init_race();
 	init_cls();
 	init_equipment();
 	init_abilities();
-	init_print();
 	update();
     }
     
