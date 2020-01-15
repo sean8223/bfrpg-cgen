@@ -85,6 +85,39 @@ th {
     border-bottom: 3px solid black;
 }
 
+ul {
+    list-style-type: none;
+    padding-inline-start: 0;
+}
+
+li {
+    border-bottom: 1px solid black;
+}
+
+table#languages {
+    border-top: 3px solid black;
+}
+
+h1#notes {
+    margin-bottom: 34px;
+}
+
+textarea#background {
+    width: 100%;
+}
+
+input#name {
+    width: 100%;
+}
+
+ul#Dwarf, ul#Halfling, ul#Human, ul#Elf {
+    border-top: 3px solid black;
+}
+
+.box {
+    border: 2px solid black;
+}
+
 section {
     margin-bottom: 25px;
 }

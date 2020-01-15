@@ -11,7 +11,7 @@
 
     <div class="container">
       <div class="row">
-	<div class="col-sm">
+	<div class="col-8">
 	  <section>
 	    <form id="top">
 	      <h1><input id="name" name="name" value="Name"></h1>
@@ -21,7 +21,7 @@
 	      <label for="height">Height:</label><input class="small" id="height" name="height">
 	      <label for="weight">Weight:</label><input class="small" id="weight" name="weight">
 	      <br>
-	      <textarea rows="4" cols="72" id="background" name="background">Background</textarea>
+	      <textarea id="background" name="background">Background</textarea>
 	      <span class="noprint">
 		<br>
 		<label for="equipment">Equipment:</label><select id="equipment" name="equipment"><option value=""></select>
@@ -34,6 +34,9 @@
 	      </span>
 	    </form>
 	  </section>
+	</div>
+	<div class="col-4 box">
+	  <span class="noprint">Your picture here!</span>
 	</div>
       </div>
     </div>
@@ -227,7 +230,7 @@
 	</div>
 	<div class="col-sm">
 	  <section>
-	    <h1>Notes</h1>
+	    <h1 id="notes">Notes</h1>
 	    <ul id="Dwarf" class="hidden">
 	      <li>Dwarves may become Clerics, Fighters, or Thieves.</li>
 	      <li>They are required to have a minimum Constitution of 9.</li>

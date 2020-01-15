@@ -37,7 +37,7 @@ var cgen = (function() {
 	this.starting_gp = supplied_or_num(params.get("starting_gp"), roll(2, 6) * 10);
 	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
 	this.additional_spells = supplied_or_list(params.getAll("additional_spell"), []);
-	this.base_cantrips = supplied_or_roll(params.get("base_cantrips"), 1, 4);
+	this.base_cantrips = supplied_or_roll(params.get("base_cantrips"), 1, 2);
 	this.cantrips = supplied_or_list(params.getAll("cantrip"), []);
     }
 
@@ -950,7 +950,7 @@ var cgen = (function() {
 	    var input = document.createElement("input");
 	    input.id = "additional_language" + i;
 	    input.name = "additional_language";
-	    (function(x) { input.onchange = function(e) { additional_languages[x] = e.target.value; update(); return false; }; })(i);
+	    (function(x) { input.oninput = function(e) { additional_languages[x] = e.target.value; }; input.onchange = function(e) { additional_languages[x] = e.target.value; update() }; })(i);
 	    td.appendChild(input);
 	}
     }
@@ -964,7 +964,7 @@ var cgen = (function() {
 	    turn_undead.classList.remove("hidden");
 	    thief_skills.classList.add("hidden");
 	}
-	else if (ch.cls == "Thief") {
+	else if (ch.cls && ch.cls.indexOf("Thief") != -1) {
 	    class_skills_col.classList.remove("hidden");
 	    turn_undead.classList.add("hidden");
 	    thief_skills.classList.remove("hidden");
@@ -1090,7 +1090,7 @@ var cgen = (function() {
 	else {
 	    to_hit.push(format_mod(ch.calc_effective_to_hit(weapon, weapon.modes[0])));
 	}
-	return to_hit.join(", ");
+	return to_hit.join("<br>");
     }
 
     function format_damage_mode(weapon, mode) {
@@ -1119,7 +1119,7 @@ var cgen = (function() {
 		damage.push(format_damage_mode(weapon, weapon.modes[i]) + " " + weapon.modes[i]);
 	    }
 	}
-	return damage.join(",");
+	return damage.join("<br>");
     }
     
     function update_weapons() {
