@@ -37,6 +37,8 @@ var cgen = (function() {
 	this.starting_gp = supplied_or_num(params.get("starting_gp"), roll(2, 6) * 10);
 	this.packs = supplied_or_list(params.getAll("pack"), [ "Basic Pack" ]);
 	this.additional_spells = supplied_or_list(params.getAll("additional_spell"), []);
+	this.base_cantrips = supplied_or_roll(params.get("base_cantrips"), 1, 4);
+	this.cantrips = supplied_or_list(params.getAll("cantrip"), []);
     }
 
     Character.prototype.inc_ability = function(ability) {
@@ -179,6 +181,25 @@ var cgen = (function() {
 	return this.spells;
     }
 
+    Character.prototype.calc_cantrips = function() {
+	if (this.cls && (this.cls.indexOf("Magic User") != -1 )) {
+	    var cantrips_known = this.base_cantrips + this.calc_effective_ability_mod("int");
+	    if (this.cantrips.length != cantrips_known) {
+		this.cantrips.length = cantrips_known;
+	    }
+	}
+	else if (this.cls == "Cleric") {
+	    var cantrips_known = this.base_cantrips + this.calc_effective_ability_mod("wis");
+	    if (this.cantrips.length != cantrips_known) {
+		this.cantrips.length = cantrips_known;
+	    }
+	}
+	else {
+	    this.cantrips.length = 0;
+	}
+	return this.cantrips;
+    }
+    
     Character.prototype.calc_additional_spells = function() {
 	if (this.cls && this.cls.indexOf("Magic User") != -1) {
 	    if (this.additional_spells.length != 1) {
@@ -356,7 +377,9 @@ var cgen = (function() {
 	    wis_adj: this.ability_adjs.wis,
 	    dex_adj: this.ability_adjs.dex,
 	    starting_gp: this.starting_gp,
-	    additional_spell: this.additional_spells
+	    additional_spell: this.additional_spells,
+	    base_cantrips: this.base_cantrips,
+	    cantrip: this.cantrips
 	};
 	var query_string = Object.keys(params).map((key) => {
 	    if (Array.isArray(params[key])) {
@@ -415,43 +438,59 @@ var cgen = (function() {
     }
 
     LOAD_RULES["Elf"] = LOAD_RULES["Dwarf"] = LOAD_RULES["Human"];
+
+
+    var MAGIC_USER_SPELLS = {
+	"0" : [ "Summon Vermin*", "Mage Hand", "Knot*", "Irritate", "Flavor*", "Clean*", "Transfigure", "Flare", "Animate Tool", "Inscribe", "Open/Close" ],
+	"1" : [ "Charm Person", "Detect Magic", "Floating Disc", "Hold Portal", "Light*", "Magic Missile", "Magic Mouth", "Protection from Evil*", "Read Languages", "Shield", "Sleep", "Ventriloquism" ]
+    };
+
+    var CLERIC_SPELLS = {
+	"0" : [ "Guidance*", "Ward*", "Cure Minor Wounds", "Mend", "Predict Weather", "Virtue", "Water to Wine", "Call to Worship", "Meal Blessing" ]
+    };
     
     var CLASS_RULES = {
 	"Fighter" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("str") >= 9; },
 	    hd : 8,
 	    next_level_xp : 2000,
-	    saves : { "death":12, "wands":13, "paralysis":14, "breath":15, "spells":17 }
+	    saves : { "death":12, "wands":13, "paralysis":14, "breath":15, "spells":17 },
+	    spells: []
 	},
 	"Cleric" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("wis") >= 9; },
 	    hd : 6,
 	    next_level_xp : 1500,
-	    saves: { "death":11, "wands":12, "paralysis":14, "breath":16, "spells":15 }
+	    saves: { "death":11, "wands":12, "paralysis":14, "breath":16, "spells":15 },
+	    spells: CLERIC_SPELLS
 	},
 	"Thief" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("dex") >= 9; },
 	    hd : 4,
 	    next_level_xp : 1250,
-	    saves: { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 }
+	    saves: { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 },
+	    spells: []
 	},
 	"Magic User" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("int") >= 9; },
 	    hd : 4,
 	    next_level_xp : 2500,
-	    saves : { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 }
+	    saves : { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 },
+	    spells: MAGIC_USER_SPELLS
 	},
 	"Fighter/Magic User" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("int") >= 9 && character.calc_effective_ability("str") >= 9 && character.race == "Elf"; },
 	    hd : 6,
 	    next_level_xp : 4500, // fighter + magic user
-	    saves : { "death":12, "wands":13, "paralysis":13, "breath":15, "spells":15 }
+	    saves : { "death":12, "wands":13, "paralysis":13, "breath":15, "spells":15 },
+	    spells: MAGIC_USER_SPELLS
 	},
 	"Magic User/Thief" : {
 	    is_allowed : function(character) { return character.calc_effective_ability("dex") >= 9 && character.calc_effective_ability("int") >= 9 && character.race == "Elf"; },
 	    hd : 4,
 	    next_level_xp : 3750, // magic user + thief
-	    saves: { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 }
+	    saves: { "death":13, "wands":14, "paralysis":13, "breath":16, "spells":15 },
+	    spells: MAGIC_USER_SPELLS
 	},
     };
     
@@ -939,13 +978,39 @@ var cgen = (function() {
 
     function update_spells() {
 	var spells_section = document.getElementById("Spells");
-	if (ch.cls && ch.cls.indexOf("Magic User") != -1) {
+	if (ch.cls && (ch.cls.indexOf("Magic User") != -1 || ch.cls == "Cleric")) {
 	    var spell_items = document.getElementById("spell_list");	
 	    spell_items.innerHTML = "<tr><th>Level</th><th>Name</th></tr>";
+
+	    var cantrips = ch.calc_cantrips();
+	    for (var i = 0, len = cantrips.length; i < len; i++) {
+		var tr = document.createElement("tr");
+		spell_items.appendChild(tr);
+		var td = document.createElement("td");
+		td.innerText = "0";
+		tr.appendChild(td);
+		td = document.createElement("td");
+		tr.appendChild(td);
+		var input = document.createElement("select");
+		input.id = "cantrip" + i;
+		input.name = "cantrip";
+		add_select_options(input, CLASS_RULES[ch.cls]["spells"]["0"]);
+		(function(x) { input.onchange = function(e) { cantrips[x] = e.target.value; update(); return false; }; })(i);
+		td.appendChild(input);
+	    }
+	    
 	    var spells = ch.calc_spells();
 	    for (var i = 0, len = spells.length; i < len; i++) {
-		spell_items.innerHTML += "<tr><td>1</td><td>"+spells[i]+"</td></tr>";
+		var tr = document.createElement("tr");
+		spell_items.appendChild(tr);
+		var td = document.createElement("td");
+		td.innerText = "1";
+		tr.appendChild(td);
+		td = document.createElement("td");
+		td.innerHTML = spells[i];
+		tr.appendChild(td);
 	    }
+	    
 	    var additional_spells = ch.calc_additional_spells();
 	    for (var i = 0, len = additional_spells.length; i < len; i++) {
 		var tr = document.createElement("tr");
@@ -955,9 +1020,10 @@ var cgen = (function() {
 		tr.appendChild(td);
 		td = document.createElement("td");
 		tr.appendChild(td);
-		var input = document.createElement("input");
+		var input = document.createElement("select");
 		input.id = "additional_spell" + i;
 		input.name = "additional_spell";
+		add_select_options(input, CLASS_RULES[ch.cls]["spells"]["1"]);
 		(function(x) { input.onchange = function(e) { additional_spells[x] = e.target.value; update(); return false; }; })(i);
 		td.appendChild(input);
 	    }
@@ -1098,6 +1164,9 @@ var cgen = (function() {
 	document.getElementById("age").value = ch.age;
 	document.getElementById("height").value = ch.height;
 	document.getElementById("weight").value = ch.weight;
+	for (var i = 0, len = ch.cantrips.length; i < len; i++) {
+	    document.getElementById("cantrip" + i).value = ch.cantrips[i] ? ch.cantrips[i] : "";
+	}
 	for (var i = 0, len = ch.additional_spells.length; i < len; i++) {
 	    document.getElementById("additional_spell" + i).value = ch.additional_spells[i] ? ch.additional_spells[i] : "";
 	}
