@@ -11,7 +11,7 @@ Implements character generation using [Equipment Packs](https://basicfantasy.org
 
 This is a single-page web application with no server-side dependencies. It can be run locally by opening `index.html` in a browser. An internet connection is required as it will attempt to download [Bootstrap](https://getbootstrap.com/) components and [Font Awesome Icons](https://fontawesome.com/v4.7.0/icons/) from their respective CDNs.
 
-Enter a name, background/bio and select race, class and equipment pack(s). Use the +/- buttons to modify abilities. The reset button will revert any ability score changes to the original "rolled" version.
+Enter a name, background/bio and select race, class and equipment pack(s). Use the +/- buttons to modify abilities. The reset button will revert any ability score changes to the original "rolled" version. Select additional languages and spells if needed. Save your character by copying the value of the link field.
 
 ## Known Issues/Limitations
 

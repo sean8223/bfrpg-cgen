@@ -176,7 +176,7 @@ var cgen = (function() {
 	    this.spells = [ "Read Magic" ];
 	}
 	else {
-	    this.spells.length = 0;
+	    this.spells = [];
 	}
 	return this.spells;
     }
