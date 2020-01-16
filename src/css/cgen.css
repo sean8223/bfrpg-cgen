@@ -10,6 +10,10 @@
   display: none;
 }
 
+label {
+    font-weight: bold;
+}
+
 .box {
     border: 1px solid black;
     display: inline-block;
@@ -85,21 +89,8 @@ th {
     border-bottom: 3px solid black;
 }
 
-ul {
-    list-style-type: none;
-    padding-inline-start: 0;
-}
-
-li {
-    border-bottom: 1px solid black;
-}
-
 table#languages {
     border-top: 3px solid black;
-}
-
-h1#notes {
-    margin-bottom: 34px;
 }
 
 textarea#background {
@@ -110,16 +101,33 @@ input#name {
     width: 100%;
 }
 
-ul#Dwarf, ul#Halfling, ul#Human, ul#Elf {
-    border-top: 3px solid black;
+div#picture {
+    border-style: double;
+    min-height: 250px;
+    width: 100%;
+    text-align: center;
 }
 
-.box {
-    border: 2px solid black;
+h1#notes {
+    margin-bottom: 31px;
+}
+
+ul#Dwarf, ul#Halfling, ul#Human, ul#Elf {
+    border-top: 3px solid black;
+    list-style-type: none;
+    padding-inline-start: 0;
+}
+
+ul#Dwarf li, ul#Halfling li, ul#Human li, ul#Elf li {
+    border-bottom: 1px solid black;
 }
 
 section {
     margin-bottom: 25px;
+}
+
+.printonly {
+    display: none;
 }
 
 @media print {
@@ -130,5 +138,29 @@ section {
     
     .fa, .noprint {
 	display: none;
+    }
+
+    span.printonly {
+	display: inline;
+    }
+
+    div.printonly {
+	display: block;
+    }
+
+    input, select, label, textarea {
+	display: none;
+    }
+
+    span#name-print { 
+	font-size: 48pt;
+    }
+
+    div.byline {
+	font-size: 18pt;
+    }
+
+    div.row {
+	margin-bottom: 12pt;
     }
 }

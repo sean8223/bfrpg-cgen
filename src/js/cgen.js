@@ -952,6 +952,10 @@ var cgen = (function() {
 	    input.name = "additional_language";
 	    (function(x) { input.oninput = function(e) { additional_languages[x] = e.target.value; }; input.onchange = function(e) { additional_languages[x] = e.target.value; update() }; })(i);
 	    td.appendChild(input);
+	    var span = document.createElement("span")
+	    span.id = input.id + "-print";
+	    span.classList.add("printonly");
+	    td.appendChild(span);
 	}
     }
 
@@ -997,6 +1001,10 @@ var cgen = (function() {
 		add_select_options(input, CLASS_RULES[ch.cls]["spells"]["0"]);
 		(function(x) { input.onchange = function(e) { cantrips[x] = e.target.value; update(); return false; }; })(i);
 		td.appendChild(input);
+		var span = document.createElement("span")
+		span.id = input.id + "-print";
+		span.classList.add("printonly");
+		td.appendChild(span);
 	    }
 	    
 	    var spells = ch.calc_spells();
@@ -1026,6 +1034,10 @@ var cgen = (function() {
 		add_select_options(input, CLASS_RULES[ch.cls]["spells"]["1"]);
 		(function(x) { input.onchange = function(e) { additional_spells[x] = e.target.value; update(); return false; }; })(i);
 		td.appendChild(input);
+		var span = document.createElement("span")
+		span.id = input.id + "-print";
+		span.classList.add("printonly");
+		td.appendChild(span);
 	    }
 	    spells_section.classList.remove("hidden");
 	}
@@ -1158,20 +1170,33 @@ var cgen = (function() {
 
     function update_inputs() {
 	document.getElementById("name").value = ch.name;
+	document.getElementById("name-print").innerText = ch.name;
 	document.getElementById("background").value = ch.background;
+	document.getElementById("background-print").innerText = ch.background;
 	document.getElementById("race").value = ch.race;
+	document.getElementById("race-print").innerText = ch.race;
 	document.getElementById("cls").value = ch.cls;
+	document.getElementById("cls-print").innerText = ch.cls;
 	document.getElementById("age").value = ch.age;
+	document.getElementById("age-print").innerText = ch.age;
 	document.getElementById("height").value = ch.height;
+	document.getElementById("height-print").innerText = ch.height;
 	document.getElementById("weight").value = ch.weight;
+	document.getElementById("weight-print").innerText = ch.weight;
 	for (var i = 0, len = ch.cantrips.length; i < len; i++) {
-	    document.getElementById("cantrip" + i).value = ch.cantrips[i] ? ch.cantrips[i] : "";
+	    var value = ch.cantrips[i] ? ch.cantrips[i] : "";
+	    document.getElementById("cantrip" + i).value = value;
+	    document.getElementById("cantrip" + i + "-print").innerText = value;
 	}
 	for (var i = 0, len = ch.additional_spells.length; i < len; i++) {
-	    document.getElementById("additional_spell" + i).value = ch.additional_spells[i] ? ch.additional_spells[i] : "";
+	    var value = ch.additional_spells[i] ? ch.additional_spells[i] : "";
+	    document.getElementById("additional_spell" + i).value = value;
+	    document.getElementById("additional_spell" + i + "-print").innerText = value;
 	}
-	for (var i = 0, len = ch.additional_languages.length; i < len; i++) {	    
-	    document.getElementById("additional_language" + i).value = ch.additional_languages[i] ? ch.additional_languages[i] : "";
+	for (var i = 0, len = ch.additional_languages.length; i < len; i++) {
+	    var value = ch.additional_languages[i] ? ch.additional_languages[i] : "";
+	    document.getElementById("additional_language" + i).value = value;
+	    document.getElementById("additional_language" + i + "-print").innerText = value;
 	}
     }
 
