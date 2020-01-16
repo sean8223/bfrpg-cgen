@@ -11,17 +11,18 @@
 
     <div class="container">
       <div class="row">
-	<div class="col-8">
+	<div class="col-sm">
 	  <section>
 	    <form id="top">
 	      <h1><input id="name" name="name" value="Name"><span id="name-print" class="printonly"></span></h1>
+	      <label for="level">Level:</label><input class="small" id="level" name="level" readonly>
 	      <label for="race">Race:</label><select id="race" name="race"><option value="" selected></option></select>
 	      <label for="cls">Class:</label><select id="cls" name="cls"><option value="" selected></select>
 	      <label for="age">Age:</label><input class="small" id="age" name="age">
 	      <label for="height">Height:</label><input class="small" id="height" name="height">
 	      <label for="weight">Weight:</label><input class="small" id="weight" name="weight">
-	      <div class="printonly byline">
-		<span id="race-print" class="printonly"></span>&nbsp;<span id="cls-print" class="printonly"></span>, Age <span id="age-print" class="printonly"></span>&nbsp;(<span id="height-print" class="printonly"></span>, <span id="weight-print" class="printonly"></span>)
+	      <div id="byline" class="printonly ">
+		<span id="race-print" class="printonly"></span>, Level <span id="level-print"></span> <span id="cls-print"></span>, Age <span id="age-print" class="printonly"></span>&nbsp;(<span id="height-print" class="printonly"></span>, <span id="weight-print" class="printonly"></span>)
 	      </div>
 	      <br>
 	      <textarea id="background" name="background">Background</textarea><div id="background-print" class="printonly"></div>
@@ -37,11 +38,6 @@
 	      </span>
 	    </form>
 	  </section>
-	</div>
-	<div class="col-4">
-	  <div id="picture">
-	    <span class="noprint">Your picture here!</span>
-	  </div>
 	</div>
       </div>
     </div>
@@ -139,10 +135,10 @@
 	  <section>
 	    <h1>Stats</h1>
 	    <dl><dt>AC</dt><dd><span id="ac"></span></dd></dl>
-	    <dl><dt>HP</dt><dd><span id="hp"></span>/<span id="max_hp"></span>&nbsp;(HD d<span id="hd"></span>)</dd></dl>
+	    <dl><dt>HP</dt><dd><span id="hp"></span> / <span id="max_hp"></span>&nbsp;(HD d<span id="hd"></span>)</dd></dl>
  	    <dl><dt>Movement</dt><dd><span id="movement"></span>&nbsp;(<span id="eqweight"></span>, <span id="load"></span>)</dd></dl>
 	    <dl><dt>Attack Bonus</dt><dd><span id="attack_bonus"></span></dd></dl>
-	    <dl><dt>XP</dt><dd><span id="xp"></span>/<span id="next_level_xp"></span>&nbsp;(XP Bonus <span id="xp_mod"></span>)</dd></dl>
+	    <dl><dt>XP</dt><dd><span id="xp"></span> / <span id="next_level_xp"></span>&nbsp;(XP Bonus <span id="xp_mod"></span>)</dd></dl>
 	    <dl><dt>GP</dt><dd><span id="gp"></span></dd></dl>
 	  </section>
 	</div>

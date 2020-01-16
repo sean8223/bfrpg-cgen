@@ -101,15 +101,8 @@ input#name {
     width: 100%;
 }
 
-div#picture {
-    border-style: double;
-    min-height: 250px;
-    width: 100%;
-    text-align: center;
-}
-
 h1#notes {
-    margin-bottom: 31px;
+    margin-bottom: 34px;
 }
 
 ul#Dwarf, ul#Halfling, ul#Human, ul#Elf {
@@ -156,11 +149,21 @@ section {
 	font-size: 48pt;
     }
 
-    div.byline {
+    div#byline {
 	font-size: 18pt;
+    }
+
+    div#background-print {
+	font-size: 18pt;
+	font-style: italic;
     }
 
     div.row {
 	margin-bottom: 12pt;
     }
+
+    h1#notes {
+	margin-bottom: 20pt;
+    }
+
 }

@@ -1183,6 +1183,8 @@ var cgen = (function() {
 	document.getElementById("height-print").innerText = ch.height;
 	document.getElementById("weight").value = ch.weight;
 	document.getElementById("weight-print").innerText = ch.weight;
+	document.getElementById("level").value = ch.level;
+	document.getElementById("level-print").innerText = ch.level;
 	for (var i = 0, len = ch.cantrips.length; i < len; i++) {
 	    var value = ch.cantrips[i] ? ch.cantrips[i] : "";
 	    document.getElementById("cantrip" + i).value = value;
