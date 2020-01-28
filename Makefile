@@ -1,18 +1,28 @@
-.PHONY: clean all
+.PHONY: clean all sources deps info
 
-all: site/css/font-awesome.min.css site/css/bootstrap.min.css site/fonts/fontawesome-webfont.eot site/fonts/fontawesome-webfont.woff2 site/fonts/fontawesome-webfont.woff site/fonts/fontawesome-webfont.ttf site/fonts/fontawesome-webfont.svg
-	rsync -Cavz src/ site
+SOURCES:=$(subst src,site,$(shell find src -name "*.js" -o -name "*.css" -o -name "*.html"))
 
-site/css site/js site/fonts:
-	mkdir -p $@
+DEPS:=$(subst .dep,,$(subst src,site,$(shell find src -name "*.dep")))
 
-site/css/font-awesome.min.css site/fonts/fontawesome-webfont.eot site/fonts/fontawesome-webfont.woff2 site/fonts/fontawesome-webfont.woff site/fonts/fontawesome-webfont.ttf site/fonts/fontawesome-webfont.svg: site/css site/fonts
-	curl -fsq https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/$(subst site/,,$@) > $@ 
+all: sources deps
 
-site/css/bootstrap.min.css: site/css
-	curl -fsq https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css > $@
+sources: $(SOURCES)
+
+deps: $(DEPS)
 
 clean:
 	rm -rf site
 	find . -name "*~" -exec rm -f {} \;
+
+site/%: src/%.dep
+	@mkdir -p $(dir $@)
+	curl -fsq `cat $<` > $@
+
+site/%: src/%
+	@mkdir -p $(dir $@)
+	cp $< $@
+
+info:
+	@echo $(SOURCES)
+	@echo $(DEPS)
 
