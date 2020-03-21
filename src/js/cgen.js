@@ -124,6 +124,24 @@ var cgen = (function() {
 	    return CLASS_RULES[this.cls].hd;
 	}
     };
+
+    Character.prototype.calc_turn_undead = function() {
+	if (this.cls == "Cleric" && CLERIC_TURN_UNDEAD[this.level]) {
+	    return CLERIC_TURN_UNDEAD[this.level];
+	}
+	else {
+	    return [ "No", "No", "No", "No", "No", "No", "No", "No", "No" ];
+	}
+    };
+
+    Character.prototype.calc_thief_skills = function() {
+	if (this.cls && this.cls.indexOf("Thief") != -1 && THIEF_SKILLS[this.level]) {
+	    return THIEF_SKILLS[this.level];
+	}
+	else {
+	    return [ "No", "No", "No", "No", "No", "No", "No" ];
+	}
+    };
     
     Character.prototype.calc_hp = function() {
 	return this.calc_max_hp();
@@ -447,6 +465,16 @@ var cgen = (function() {
 
     var CLERIC_SPELLS = {
 	"0" : [ "Guidance*", "Ward*", "Cure Minor Wounds", "Mend", "Predict Weather", "Virtue", "Water to Wine", "Call to Worship", "Meal Blessing" ]
+    };
+
+    var CLERIC_TURN_UNDEAD = {
+	// level : [ 1hd, 2hd, 3hd, 4hd, 5hd, 6hd, 7hd, 8hd, 9+hd ]
+	"1" : [ "13", "17", "19", "No", "No", "No", "No", "No", "No" ]
+    };
+
+    var THIEF_SKILLS = {
+	// level: [ open, remove, pick, move, climb, hide, listen ]
+	"1" : [ "25", "20", "30", "25", "80", "10", "30"]
     };
     
     var CLASS_RULES = {
@@ -964,11 +992,20 @@ var cgen = (function() {
 	var turn_undead = document.getElementById("turn_undead");
 	var thief_skills = document.getElementById("thief_skills");
 	if (ch.cls == "Cleric" ) {
-	    class_skills_col.classList.remove("hidden");
+	    var turn_undead_values = ch.calc_turn_undead();
+	    for (var i = 0, len = turn_undead_values.length; i < len; i++) {
+		var dd = document.getElementById("turn"+(i+1));
+		dd.innerText = turn_undead_values[i];
+	    }
 	    turn_undead.classList.remove("hidden");
 	    thief_skills.classList.add("hidden");
 	}
 	else if (ch.cls && ch.cls.indexOf("Thief") != -1) {
+	    var thief_skill_values = ch.calc_thief_skills();
+	    for (var i = 0, len = thief_skill_values.length; i < len; i++) {
+		var dd = document.getElementById("thief"+(i+1));
+		dd.innerText = thief_skill_values[i];
+	    }
 	    class_skills_col.classList.remove("hidden");
 	    turn_undead.classList.add("hidden");
 	    thief_skills.classList.remove("hidden");
@@ -1086,6 +1123,10 @@ var cgen = (function() {
 		tbl = tbl + "<tr><td>" + (pack.items[j].qty ? pack.items[j].qty : 1) + "</td><td>" + pack.items[j].name + "</td></tr>";
 	    }
 	}
+	var blanks = 15 - ch.packs.length;
+	for (var i = 0; i < blanks; i++) {
+	    tbl = tbl + "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>";
+	}
 	var inventory = document.getElementById("inventory").innerHTML = tbl;
     }
 
@@ -1151,6 +1192,9 @@ var cgen = (function() {
 		}
 	    }
 	}
+	for (var i = 0; i < 4; i++) {
+	    tbl = tbl + "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+	}
 	document.getElementById("weapons").innerHTML = tbl;
     }	
     
@@ -1165,6 +1209,7 @@ var cgen = (function() {
 		}
 	    }
 	}
+	tbl = tbl + "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 	document.getElementById("armor").innerHTML = tbl;
     }
 

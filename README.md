@@ -18,7 +18,13 @@ Don't like the numbers? Reload the page and try again!
 ## Known Issues/Limitations
 
 * It is possible to create illegal combinations of race/class/equipment under certain circumstances
-* The visual layout/CSS is very much a work in progress
+
+## Future Directions
+
+* Generate higher-level characters
+* Additional races/classes
+
+## Credits
 
 Contains content Copyright &copy; 2006-2016 Chris Gonnerman; and Copyright &copy; 2009 Shayne Power; and Copyright &copy; 2009 Sidney Parham, Nazim Karaca, R. Kevin Smoot, ckutalik, steveman, Svankensen, and Chris Gonnerman and released under the terms of the [Open Game License 1.0a](http://opengamingfoundation.org/ogl.html).
 
